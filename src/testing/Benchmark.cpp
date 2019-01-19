@@ -36,7 +36,9 @@ void Benchmark::test_local_search(vector<Problem *> &problems) {
     for (int i = 0; i < problems.size(); i++) {
         BenchmarkResult *result_with_random_input = test(*ls_solver_with_random_input, *problems[i], 10);
         BenchmarkResult *result_with_heuristic_input = test(*ls_solver_with_heuristic_input, *problems[i], 10);
-        cout << problems[i]->name << ": " << problems[i]->cost_of_path(result_with_random_input->best_solution->solution) << ", " << problems[i]->cost_of_path(result_with_heuristic_input->best_solution->solution) << endl;
+        cout << problems[i]->name << ": "
+             << problems[i]->cost_of_path(result_with_random_input->best_solution->solution) << ", "
+             << problems[i]->cost_of_path(result_with_heuristic_input->best_solution->solution) << endl;
     }
 
 }
@@ -53,18 +55,19 @@ void Benchmark::test_iterated_local_search(vector<Problem *> &problems) {
     for (int i = 0; i < problems.size(); i++) {
         BenchmarkResult *ls_result = test(*ls_solver_with_random_input, *problems[i], 100);
 
-        int time_ms = int(ls_result->computation_sec_time  * 1000);
+        int time_ms = int(ls_result->computation_sec_time * 1000);
         MS runtime(time_ms);
 //        cout << "time_ms: " << time_ms;
         ils_solver_with_random_input = new IteratedLocalSearchSteepestSolver(*random_initializer, *ls_helper, runtime);
         BenchmarkResult *ils_result = test(*ils_solver_with_random_input, *problems[i], 1);
-        cout << problems[i]->name << ": " << problems[i]->cost_of_path(ls_result->best_solution->solution) << ", " << problems[i]->cost_of_path(ils_result->best_solution->solution) << endl;
+        cout << problems[i]->name << ": " << problems[i]->cost_of_path(ls_result->best_solution->solution) << ", "
+             << problems[i]->cost_of_path(ils_result->best_solution->solution) << endl;
 
     }
 }
 
 
-void Benchmark::test_evolutionary(vector<Problem *> & problems) {
+void Benchmark::test_evolutionary(vector<Problem *> &problems) {
     LocalSearchHelper *ls_helper = new LocalSearchHelper();
 
     RandomSolver *random = new RandomSolver();
@@ -73,16 +76,23 @@ void Benchmark::test_evolutionary(vector<Problem *> & problems) {
                                                                                            *ls_helper);
 
     IteratedLocalSearchSteepestSolver *ils_solver_with_random_input = nullptr;
-    EvolutionarySolver * evolutionarySolver = new EvolutionarySolver(*ls_helper);
+    EvolutionarySolver *evolutionarySolver = nullptr;
     for (int i = 0; i < problems.size(); i++) {
-//        BenchmarkResult *ls_result = test(*ls_solver_with_random_input, *problems[i], 100);
+        BenchmarkResult *ls_result = test(*ls_solver_with_random_input, *problems[i], 100);
 //
-//        int time_ms = int(ls_result->computation_sec_time  * 1000);
-//        MS runtime(time_ms);
+        int time_ms = int(ls_result->computation_sec_time * 1000);
+        MS runtime(time_ms);
 //
-//        ils_solver_with_random_input = new IteratedLocalSearchSteepestSolver(*random_initializer, *ls_helper, runtime);
-//        BenchmarkResult *ils_result = test(*ils_solver_with_random_input, *problems[i], 1);
-        BenchmarkResult *evolutonary_result = test(*evolutionarySolver, *problems[i], 10);
+        ils_solver_with_random_input = new IteratedLocalSearchSteepestSolver(*random_initializer, *ls_helper, runtime);
+        BenchmarkResult *ils_result = test(*ils_solver_with_random_input, *problems[i], 1);
+
+        evolutionarySolver = new EvolutionarySolver(*ls_helper, runtime);
+        BenchmarkResult *evolutonary_result = test(*evolutionarySolver, *problems[i], 1);
+
+        cout << problems[i]->name << ": " << problems[i]->cost_of_path(ls_result->best_solution->solution) << ", "
+             << problems[i]->cost_of_path(ils_result->best_solution->solution) << ", "
+             << problems[i]->cost_of_path(evolutonary_result->best_solution->solution)
+             << endl;
 
     }
 };

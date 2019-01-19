@@ -108,45 +108,76 @@ int *tournament_select(std::vector<int *> &generation, Problem &problem) {
 }
 
 
-EvolutionarySolver::EvolutionarySolver(LocalSearchHelper &helper) {
+void update(std::vector<int *> &generation, int* child, Problem &problem){
+    int worst_solution_index = 0;
+    float worst_solution_score = 0;
+    for (int i = 0; i < generation.size() ;i++){
+        float tmp_score = problem.cost_of_path(generation[i]);
+        if (worst_solution_score < tmp_score){
+            worst_solution_index = i;
+            worst_solution_score = tmp_score;
+        }
+    }
+    if (worst_solution_score > problem.cost_of_path(child)){
+        generation[worst_solution_index] = child;
+    }
+};
+
+
+
+EvolutionarySolver::EvolutionarySolver(LocalSearchHelper &helper, MS runtime) {
     this->local_search_helper = &helper;
+    this->runtime = runtime;
 }
 
 Solution *EvolutionarySolver::solve(Problem &problem) {
-    int population_size = problem.size * 5;
-    int n_of_generation = 80000; //TODO propably too big
+    int population_size = int(problem.size * 0.2);
 
     std::vector<int *> generation;
     generation.resize((unsigned long) population_size);
 
     populate(generation, problem);
 
+    TIME_PT end = SYS_CLOCK::now() + runtime;
+    while (SYS_CLOCK::now() < end) {
+
+        int parent1_id, parent2_id;
+        do {
+            parent1_id = rand() % population_size;
+            parent2_id = rand() % population_size;
+        }while (parent1_id == parent2_id);
+        int *random_parent1 = generation[parent1_id];
+        int *random_parent2 = generation[parent2_id];
+
+        int *child = crossover(random_parent1, random_parent2, problem.size);
+        this->local_search_helper->compute_solution_inplace(child, problem);
+
+        update(generation,child, problem);
+
+
+
+//        for (int j = 0; j < new_generation.size(); j++) {
+//            int *tournament_parent1 = tournament_select(generation, problem);
+//            int *tournament_parent2 = tournament_select(generation, problem);
+//
+//            int *tournament_child = crossover(tournament_parent1, tournament_parent2, problem.size);
+//            this->local_search_helper->compute_solution_inplace(tournament_child, problem);
+//            new_generation[j] = tournament_child ;
+//        }
+//        for (int j = 0; j < new_generation.size(); j++) {
+//            double normalized_rand = ((double) rand() / (RAND_MAX));
+//            if (normalized_rand < 0.3) {
+//                new_generation[j] = mutate(new_generation[j], problem.size); //@TODO change mutate for inplace
+//                this->local_search_helper->compute_solution_inplace(new_generation[j], problem);
+//            }
+//        }
+//        Strategy* generation_best_strategy = get_best_solution(new_generation, problem);
+//        if (generation_best_strategy->score < best_strategy->score){
+//            best_strategy = generation_best_strategy;
+//            cout << best_strategy->score << endl;
+//        }
+    }
     Strategy *best_strategy = get_best_solution(generation, problem);
 
-    for (int i = 0; i < n_of_generation; i++) {
-        std::vector<int *> new_generation;
-        new_generation.resize((unsigned long) population_size);
-
-        for (int j = 0; j < new_generation.size(); j++) {
-            int *tournament_parent1 = tournament_select(generation, problem);
-            int *tournament_parent2 = tournament_select(generation, problem);
-
-            int *tournament_child = crossover(tournament_parent1, tournament_parent2, problem.size);
-            this->local_search_helper->compute_solution_inplace(tournament_child, problem);
-            new_generation[j] = tournament_child ;
-        }
-        for (int j = 0; j < new_generation.size(); j++) {
-            double normalized_rand = ((double) rand() / (RAND_MAX));
-            if (normalized_rand < 0.3) {
-                new_generation[j] = mutate(new_generation[j], problem.size); //@TODO change mutate for inplace
-                this->local_search_helper->compute_solution_inplace(new_generation[j], problem);
-            }
-        }
-        Strategy* generation_best_strategy = get_best_solution(new_generation, problem);
-        if (generation_best_strategy->score < best_strategy->score){
-            best_strategy = generation_best_strategy;
-            cout << best_strategy->score << endl;
-        }
-    }
     return new Solution(problem.size, best_strategy->solution);
 }

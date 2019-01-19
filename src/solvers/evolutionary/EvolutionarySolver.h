@@ -8,13 +8,15 @@
 
 #include "../Solver.h"
 #include "../local-search/LocalSearchHelper.h"
+#include "../local-search/IteratedLocalSearchSteepestSolver.h"
 
 class EvolutionarySolver: public Solver {
 public:
-    EvolutionarySolver(LocalSearchHelper&);
+    EvolutionarySolver(LocalSearchHelper&, MS);
     Solution* solve(Problem&);
 private:
     LocalSearchHelper *local_search_helper;
+    MS runtime;
 };
 
 
