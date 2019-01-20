@@ -1,14 +1,10 @@
 #ifndef PROBLEM_H
 #define PROBLEM_H
 
-#include "Solution.h"
-#include "TSPSolution.h"
 #include <string>
 #include <vector>
 
 using namespace std;
-
-typedef TSPSolution *(*AlgorithmFunction)(int *, float **, double, int);
 
 class Problem {
 public:

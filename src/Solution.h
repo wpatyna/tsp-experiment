@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "TSPSolution.h"
+#include "Problem.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ class Solution{
         int *solution;
         int size;
 //        TSPSolution tsp_solution;
-        bool compare(Solution&);
+        bool compare(Solution&, Problem&);
         Solution(int, int*/*, float, float, TSPSolution&*/);
         float getScore();
 };

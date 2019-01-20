@@ -123,7 +123,7 @@ BenchmarkResult *Benchmark::test(Solver &solver, Problem &problem, int fire_time
         if (!best_solution) {
             best_solution = solution;
         } else {
-            best_solution = best_solution->compare(*solution) ? solution : best_solution;
+            best_solution = best_solution->compare(*solution, problem) ? solution : best_solution;
         }
 //        cout << count << endl;
     } while (count < fire_times);

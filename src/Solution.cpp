@@ -8,8 +8,8 @@ Solution::Solution(int size, int *solution /*, float score, float initial_distan
 //    this->tsp_solution = tsp_solution;
 }
 
-bool Solution::compare(Solution &solution2){
-    return this->score > solution2.score;
+bool Solution::compare(Solution &solution2, Problem& problem){
+    return problem.cost_of_path(this->solution) > problem.cost_of_path(solution2.solution);
 }
 
 float Solution::getScore(){
