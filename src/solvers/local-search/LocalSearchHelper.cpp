@@ -71,6 +71,7 @@ void LocalSearchHelper::compute_solution_inplace(int *solution, Problem &problem
                 }
             }
         }
+//        cout << max_delta << endl;
         if (max_delta < -0.001 ){
             if (is_the_same_cycle(problem.size, best_i, best_j)){
                 reverseSequence(solution, best_i, best_j);

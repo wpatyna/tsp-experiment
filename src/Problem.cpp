@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Problem.h"
 
 Problem::Problem(string &name, int size, float **distance_matrix) {
