@@ -128,10 +128,24 @@ BenchmarkResult *Benchmark::test(Solver &solver, Problem &problem, int fire_time
 //        cout << count << endl;
     } while (count < fire_times);
 
+    double* times = new double[fire_times];
+
+    for (int i=0;i < fire_times; i++){
+        times[i] = solutions[i]->time;
+    }
+
+    float* scores = new float[fire_times];
+
+
+    for (int i=0;i < fire_times; i++){
+        scores[i] = problem.cost_of_path(solutions[i]->solution);
+    }
+
     return new BenchmarkResult(
             *best_solution,
-            *best_solution, //@TODO change to worst solution
             solutions,
-            elapsed
+            elapsed,
+            times,
+            scores
     );
 }

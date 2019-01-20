@@ -11,11 +11,12 @@
 class BenchmarkResult {
 public:
     Solution* best_solution;
-    Solution* worst_solution;
     vector<Solution*>* solutions;
+    double* times;
+    float* scores;
     double computation_sec_time;
 
-    BenchmarkResult(Solution&, Solution&, vector<Solution*>&, double);
+    BenchmarkResult(Solution&, vector<Solution*>&, double, double*, float*);
 
 };
 
