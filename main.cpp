@@ -29,6 +29,6 @@ int main(int argc, char const *argv[]) {
 
 //    benchmark->test_heuristics(problems);
 //    benchmark->test_local_search(problems);
-//    benchmark->test_iterated_local_search(problems);
-    benchmark->test_evolutionary(problems);
+    benchmark->test_iterated_local_search(problems);
+//    benchmark->test_evolutionary(problems);
 }

@@ -12,19 +12,19 @@ int *perturb(int *tour, int size) {
     int *solution = new int[size];
     random_device rd;
     default_random_engine rng(rd());
-    for(int offset = 0; offset < size ; offset+=size/2){
-    uniform_int_distribution<int> random_offset(1, size / 2 / 4);
-    // Determine random positions
-    int pos1 = random_offset(rng);
-    int pos2 = pos1 + random_offset(rng);
-    int pos3 = pos2 + random_offset(rng);
+    for (int offset = 0; offset < size; offset += size / 2) {
+        uniform_int_distribution<int> random_offset(1, size / 2 / 4);
+        // Determine random positions
+        int pos1 = random_offset(rng);
+        int pos2 = pos1 + random_offset(rng);
+        int pos3 = pos2 + random_offset(rng);
 
-    int current_index = 0;
+        int current_index = 0;
         for (int i = offset; i < pos1 + offset; i++) {
             solution[current_index] = tour[i];
             current_index++;
         }
-        for (int i = pos3 + offset; i < size/2 + offset; i++) {
+        for (int i = pos3 + offset; i < size / 2 + offset; i++) {
             solution[current_index] = tour[i];
             current_index++;
         }
@@ -42,7 +42,7 @@ int *perturb(int *tour, int size) {
 }
 
 IteratedLocalSearchSteepestSolver::IteratedLocalSearchSteepestSolver(SolutionInitializer &solution_initializer,
-                                                                     LocalSearchHelper &helper, MS runtime){
+                                                                     LocalSearchHelper &helper, MS runtime) {
     this->solution_initializer = &solution_initializer;
     this->runtime = runtime;
     this->helper = &helper;

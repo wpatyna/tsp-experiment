@@ -7,6 +7,7 @@
 
 
 #include "../Solution.h"
+#include "Similarity.h"
 
 class BenchmarkResult {
 public:
@@ -15,8 +16,9 @@ public:
     double* times;
     float* scores;
     double computation_sec_time;
+    vector<SimilarityPoint> similarity_points;
 
-    BenchmarkResult(Solution&, vector<Solution*>&, double, double*, float*);
+    BenchmarkResult(Solution&, vector<Solution*>&, double, double*, float*, vector<SimilarityPoint>);
 
 };
 

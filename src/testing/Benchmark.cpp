@@ -9,6 +9,7 @@
 #include "../solvers/heuristics/NNeighbourSolver.h"
 #include "../solvers/local-search/IteratedLocalSearchSteepestSolver.h"
 #include "../solvers/evolutionary/EvolutionarySolver.h"
+#include "Similarity.h"
 
 
 void Benchmark::test_heuristics(vector<Problem *> &problems) {
@@ -44,6 +45,7 @@ void Benchmark::test_local_search(vector<Problem *> &problems) {
 }
 
 void Benchmark::test_iterated_local_search(vector<Problem *> &problems) {
+    int count_of_ils = 10;
     LocalSearchHelper *ls_helper = new LocalSearchHelper();
 
     RandomSolver *random = new RandomSolver();
@@ -53,13 +55,13 @@ void Benchmark::test_iterated_local_search(vector<Problem *> &problems) {
 
     IteratedLocalSearchSteepestSolver *ils_solver_with_random_input = nullptr;
     for (int i = 0; i < problems.size(); i++) {
-        BenchmarkResult *ls_result = test(*ls_solver_with_random_input, *problems[i], 100);
+        BenchmarkResult *ls_result = test(*ls_solver_with_random_input, *problems[i], 1000);
 
-        int time_ms = int(ls_result->computation_sec_time * 1000);
+        int time_ms = int(ls_result->computation_sec_time * 1000  / count_of_ils);
         MS runtime(time_ms);
-//        cout << "time_ms: " << time_ms;
+
         ils_solver_with_random_input = new IteratedLocalSearchSteepestSolver(*random_initializer, *ls_helper, runtime);
-        BenchmarkResult *ils_result = test(*ils_solver_with_random_input, *problems[i], 1);
+        BenchmarkResult *ils_result = test(*ils_solver_with_random_input, *problems[i], count_of_ils);
         cout << problems[i]->name << ": " << problems[i]->cost_of_path(ls_result->best_solution->solution) << ", "
              << problems[i]->cost_of_path(ils_result->best_solution->solution) << endl;
 
@@ -99,6 +101,7 @@ void Benchmark::test_evolutionary(vector<Problem *> &problems) {
 
 
 BenchmarkResult *Benchmark::test(Solver &solver, Problem &problem, int fire_times) {
+    Similarity* similarity = new Similarity();
     int count = 0;
     struct timespec start, finish;
     double elapsed = 0;
@@ -141,11 +144,16 @@ BenchmarkResult *Benchmark::test(Solver &solver, Problem &problem, int fire_time
         scores[i] = problem.cost_of_path(solutions[i]->solution);
     }
 
+    vector<SimilarityPoint> points = similarity->get_similarity_points(solutions, problem);
+
+
+
     return new BenchmarkResult(
             *best_solution,
             solutions,
             elapsed,
             times,
-            scores
+            scores,
+            points
     );
 }
